@@ -1,2 +1,2 @@
 # CodeGay
-java课设，具有简易online ide功能的编程向（noip友好）社交平台
+java课设 编程向社交平台
