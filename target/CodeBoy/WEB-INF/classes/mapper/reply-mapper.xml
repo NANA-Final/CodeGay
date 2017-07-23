@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jishaokang.dao.ReplyDao">
+    <resultMap id="ReplyResult" type="jishaokang.model.Reply">
+        <result column="replyId" property="replyId"/>
+        <result column="discussId" property="discussId"/>
+        <result column="replyerId" property="replyerId"/>
+        <result column="content" property="content"/>
+        <result column="replyTime" property="replyTime"/>
+    </resultMap>
+    <insert id="insert" parameterType="jishaokang.model.Reply" useGeneratedKeys="true" keyProperty="replyId">
+        INSERT INTO reply (discussId,replyerId,content,replyTime)
+        VALUES (#{discussId},#{replyerId},#{content},#{replyTime})
+    </insert>
+    <delete id="delete" parameterType="int">
+        DELETE FROM reply
+        WHERE replyId=#{replyId}
+    </delete>
+    <select id="selectByReplyId" parameterType="int" resultType="jishaokang.model.Reply" >
+        SELECT * FROM reply
+        WHERE replyId=#{replyId}
+    </select>
+    <select id="selectByDiscussId" parameterType="int" resultMap="ReplyResult">
+        SELECT * FROM reply
+        WHERE discussId=#{discussId}
+    </select>
+    <select id="selectByUserId" parameterType="int" resultMap="ReplyResult">
+        SELECT * FROM reply
+        WHERE replyerId=#{replyerId}
+    </select>
+</mapper>

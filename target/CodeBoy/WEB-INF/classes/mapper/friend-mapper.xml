@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jishaokang.dao.FriendDao">
+    <resultMap id="FriendResult" type="jishaokang.model.Friend">
+        <result column="friendingId" property="friendingId"/>
+        <result column="friendId" property="friendId"/>
+        <result column="hostId" property="hostId"/>
+        <result column="friendName" property="friendName"/>
+        <result column="friendTime" property="friendTime"/>
+        <result column="messageRead" property="messageRead"/>
+    </resultMap>
+    <insert id="insert" parameterType="jishaokang.model.Friend" useGeneratedKeys="true" keyProperty="friendingId">
+        INSERT INTO friend (hostId,friendId,friendTime,friendName,messageRead)
+        VALUES (#{hostId},#{friendId},#{friendTime},#{friendName},#{messageRead})
+    </insert>
+    <update id="updateFriendName" parameterType="jishaokang.model.Friend">
+        UPDATE friend SET friendName=#{friendName}
+        WHERE friendingId=#{friendingId}
+    </update>
+    <update id="updateMessageRead" parameterType="jishaokang.model.Friend">
+        UPDATE friend SET messageRead=#{messageRead}
+        WHERE friendingId=#{friendingId}
+    </update>
+    <delete id="delete" parameterType="int">
+        DELETE FROM friend
+        WHERE friendingId=#{friendingId}
+    </delete>
+    <select id="selectByFriendingId" parameterType="int" resultType="jishaokang.model.Friend">
+        SELECT * FROM friend
+        WHERE friendingId=#{friendingId}
+    </select>
+    <select id="selectByHostId" parameterType="int" resultMap="FriendResult">
+        SELECT * FROM friend
+        WHERE hostId=#{hostId}
+    </select>
+</mapper>

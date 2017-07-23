@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jishaokang.dao.NoticeDao">
+    <resultMap id="NoticeResult" type="jishaokang.model.Notice">
+        <result column="noticeId" property="noticeId"/>
+        <result column="noticerId" property="noticerId"/>
+        <result column="content" property="content"/>
+        <result column="noticeTime" property="noticeTime"/>
+        <result column="noticeUrl" property="noticeUrl"/>
+    </resultMap>
+    <insert id="insert" parameterType="jishaokang.model.Notice" useGeneratedKeys="true" keyProperty="noticeId">
+        INSERT INTO notice (noticerId,content,noticeTime,noticeUrl)
+        VALUES (#{noticerId},#{content},#{noticeTime},#{noticeUrl})
+    </insert>
+    <select id="selectByNoticerId" parameterType="int" resultMap="NoticeResult">
+        select * from notice where noticerId= #{noticerId}
+        ORDER BY noticeId DESC
+    </select>
+</mapper>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>编辑文章</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="http://120.24.70.191:8080/CodeBoy/css/bootstrap.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <!--导航栏--------------------------------------------------------------------------------------->
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <nav class="navbar navbar-default" role="navigation">
+                <!--logo-->
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">
+                        <img src="http://120.24.70.191:8080/CodeBoy/images/logo.png" width="100px" height="50px" style="padding-bottom: 20px" >
+                    </a>
+                </div>
+                <!--功能区：首页 文章 代码 好友 交流 设置-->
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li>
+                            <a href="http://120.24.70.191:8080/CodeBoy/user">首页</a>
+                        </li>
+                        <li class="active">
+                            <a href="http://120.24.70.191:8080/CodeBoy/article">文章</a>
+                        </li>
+                        <li>
+                            <a href="http://120.24.70.191:8080/CodeBoy/code">代码</a>
+                        </li>
+                        <li>
+                            <a href="http://120.24.70.191:8080/CodeBoy/friend">好友</a>
+                        </li>
+                        <li>
+                            <a href="http://120.24.70.191:8080/CodeBoy/discuss">讨论</a>
+                        </li>
+                        <li>
+                            <a href="http://120.24.70.191:8080/CodeBoy/user/setting">设置</a>
+                        </li>
+                    </ul>
+                    <!--用户选项-->
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown">
+                                <span class="username"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a onclick="unlogin()">注销</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <!--新建文章--------------------------------------------------------------------------------------->
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <div class="page-header">
+                <h1>
+                    编辑文章&nbsp;&nbsp;
+                    <small>
+                        <a onclick="editArticle()">保存</a>
+                    </small>
+                </h1>
+            </div>
+            <!--文章表单-->
+            <form role="form">
+                <div class="form-group">
+                    <label for="title">标题</label>
+                    <input type="text" class="form-control" id="title" />
+                </div>
+                <div class="form-group">
+                    <label for="label">标签</label>
+                    <input type="text" class="form-control" id="label" />
+                </div>
+                <div class="form-group">
+                    <label for="picture">配图</label>
+                    <input type="file" id="picture" />
+                </div>
+            </form>
+            <textarea class="form-control" rows="20" id="content">在此输入内容</textarea>
+        </div>
+    </div>
+
+</div>
+<script src="http://120.24.70.191:8080/CodeBoy/js/jquery.min.js"></script>
+<script src="http://120.24.70.191:8080/CodeBoy/js/bootstrap.min.js"></script>
+<script>
+    var userId,username,articleId,title,label,content,picture,pictureCode;
+    /*获取用户信息*/
+    function getUserInformation(){
+        $.post("http://120.24.70.191:8080/CodeBoy/back_end/user/get_user_information",
+            function(result){
+                username = result.data.username;
+                userId = result.data.userId;
+                $(".username").html(username);
+            });
+    }
+    /*注销*/
+    function unlogin() {
+        $.post("http://120.24.70.191:8080/CodeBoy/back_end/user/unlogin",
+            function(data){
+                alert(data.message);
+                window.location.href="http://120.24.70.191:8080/CodeBoy/user/login";
+            });
+    }
+    //获取id
+    function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r != null) return unescape(r[2]); return null; //返回参数值
+    }
+    /*获取文章信息*/
+    function getOriginArticle(){
+        articleId = getUrlParam("articleId");
+        $.post("http://120.24.70.191:8080/CodeBoy/back_end/article/get_detailed_article",{articleId:articleId},
+            function(result){
+                $("#title").val(result.data.title);
+                $("#label").val(result.data.label);
+                $("#content").val(result.data.content);
+                pictureCode = result.data.picture;
+            });
+    }
+
+    /*提交表单*/
+    function editArticle(){
+        title = $("#title").val();
+        label = $("#label").val();
+        content = $("#content").val();
+        picture = document.getElementById('picture');
+        if (picture.value!=""){
+            var imgFile = new FileReader();
+            imgFile.readAsDataURL(picture.files[0]);
+            imgFile.onload = function () {
+                pictureCode = this.result; //base64数据
+                $.post("http://120.24.70.191:8080/CodeBoy/back_end/article/edit_article",
+                    //id，标题，标签，时间，内容，作者，图片，点赞数，收藏数
+                    {articleId:articleId,title:title,label:label,content:content,picture:pictureCode},
+                    function(result){
+                        alert(result.message);
+                        window.location.href = "http://120.24.70.191:8080/CodeBoy/article/article_detail?articleId=" + articleId;
+                    });
+            }
+        }else{
+            $.post("http://120.24.70.191:8080/CodeBoy/back_end/article/edit_article",
+                //id，标题，标签，时间，内容，作者，图片，点赞数，收藏数
+                {articleId:articleId,title:title,label:label,content:content,author:username,picture:pictureCode,totalLike:0,totalCollect:0},
+                function(result){
+                    alert(result.message);
+                    window.location.href = "http://120.24.70.191:8080/CodeBoy/article/article_detail?articleId=" + articleId;
+                });
+        }
+    }
+    getUserInformation();
+    getOriginArticle();
+</script>
+
+</body>
+</html>

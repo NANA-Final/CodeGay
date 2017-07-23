@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jishaokang.dao.DiscussDao">
+    <resultMap id="DiscussResult" type="jishaokang.model.Discuss">
+        <result column="discussId" property="discussId"/>
+        <result column="discusserId" property="discusserId"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="discussTime" property="discussTime"/>
+        <result column="latestReply" property="latestReply"/>
+        <result column="totalReply" property="totalReply"/>
+    </resultMap>
+    <insert id="insert" parameterType="jishaokang.model.Discuss" useGeneratedKeys="true" keyProperty="discussId">
+        INSERT INTO discuss (discusserId,title,content,discussTime,latestReply,totalReply)
+        VALUES (#{discusserId},#{title},#{content},#{discussTime},#{latestReply},#{totalReply})
+    </insert>
+    <delete id="delete" parameterType="int">
+        DELETE FROM discuss
+        WHERE discussId = #{discussId}
+    </delete>
+    <update id="updateLatestReply" parameterType="jishaokang.model.Discuss">
+        UPDATE discuss SET latestReply=#{latestReply}
+        WHERE discussId = #{discussId}
+    </update>
+    <update id="incTotalReply" parameterType="int">
+        UPDATE discuss SET totalReply = (totalReply + 1)
+        WHERE discussId = #{discussId}
+    </update>
+    <update id="decTotalReply" parameterType="int">
+        UPDATE discuss SET totalReply = (totalReply - 1)
+        WHERE discussId = #{discussId}
+    </update>
+    <select id="select" resultMap="DiscussResult">
+        SELECT * FROM discuss
+        ORDER BY latestReply DESC
+    </select>
+    <select id="selectByDiscussId" parameterType="int" resultType="jishaokang.model.Discuss">
+        SELECT * FROM discuss
+        WHERE discussId=#{discussId}
+    </select>
+    <select id="selectByUserId" parameterType="int" resultMap="DiscussResult">
+        SELECT * FROM discuss
+        WHERE discusserId=#{discusserId}
+        ORDER BY latestReply DESC
+    </select>
+</mapper>

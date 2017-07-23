@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jishaokang.dao.FriendRequestDao">
+    <resultMap id="FriendRequestResult" type="jishaokang.model.FriendRequest">
+    <result column="friendRequestId" property="friendRequestId"/>
+    <result column="senderId" property="senderId"/>
+    <result column="receiverId" property="receiverId"/>
+    <result column="introduce" property="introduce"/>
+    <result column="friendRequestTime" property="friendRequestTime"/>
+</resultMap>
+    <insert id="insert" parameterType="jishaokang.model.FriendRequest" useGeneratedKeys="true" keyProperty="friendRequestId">
+        INSERT INTO friendRequest (senderId,receiverId,introduce,friendRequestTime)
+        VALUES (#{senderId},#{receiverId},#{introduce},#{friendRequestTime})
+    </insert>
+    <update id="update" parameterType="jishaokang.model.FriendRequest">
+        UPDATE friendRequest SET introduce=#{introduce},friendRequestTime=#{friendRequestTime}
+        WHERE friendRequestId=#{friendRequestId}
+    </update>
+    <delete id="delete" parameterType="int">
+        DELETE FROM friendRequest
+        WHERE friendRequestId=#{friendRequestId}
+    </delete>
+    <select id="selectByFriendRequestId" parameterType="int" resultType="jishaokang.model.FriendRequest">
+        SELECT * FROM friendRequest
+        WHERE friendRequestId=#{friendRequestId}
+    </select>
+    <select id="selectByReceiverId" parameterType="int" resultMap="FriendRequestResult">
+        SELECT * FROM friendRequest
+        WHERE receiverId=#{receiverId}
+    </select>
+</mapper>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>文章详情</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/prettify/r298/prettify.css" rel="stylesheet">
+</head>
+<body onload="prettyPrint()">
+<div class="container">
+
+    <!--导航栏--------------------------------------------------------------------------------------->
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <nav class="navbar navbar-default" role="navigation">
+                <!--logo-->
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">
+                        <img src="logo.png" width="100px" height="50px" style="padding-bottom: 20px" >
+                    </a>
+                </div>
+                <!--功能区：首页 文章 代码 好友 交流 设置-->
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li>
+                            <a href="home">首页</a>
+                        </li>
+                        <li class="active">
+                            <a href="article">文章</a>
+                        </li>
+                        <li>
+                            <a href="code">代码</a>
+                        </li>
+                        <li>
+                            <a href="friend">好友</a>
+                        </li>
+                        <li>
+                            <a href="talk">交流</a>
+                        </li>
+                        <li>
+                            <a href="setting">设置</a>
+                        </li>
+                    </ul>
+                    <!--用户选项-->
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" class="username"></a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a onclick="unlogin()">注销</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <!--文章面包屑导航条-------------------------------------------------------------------------------->
+    <div class="row clearfix">
+        <div class="col-md-10 column">
+            <ul class="breadcrumb">
+                <li>
+                    <a onclick="otherArticle()" class="author"></a>
+                </li>
+                <li>
+                    <a onclick="findArticleByLabel()" class="label"></a>
+                </li>
+                <li>
+                    <a onclick="findArticleByTime()" class="time"></a>
+                </li>
+                <li class="title"></li>
+            </ul>
+        </div>
+        <!--操作：点赞，收藏-->
+        <div class="col-md-2 column" style="font-size: 12.5px">
+            <a onclick="like()">
+                <img src="like.png"  width="30px" height="30px" >点赞
+            </a>
+            <a onclick="collect()">
+                <img src="collect.png"  width="25px" height="25px"  onclick="editArticle()">收藏
+            </a>
+        </div>
+    </div>
+
+    <!--文章信息----------------------------------------------------------------------------------------->
+    <div class="row clearfix">
+        <!--作者信息-->
+        <div class="col-md-2 column" style="padding-left: 65px;padding-top:30px ">
+            <a onclick="otherpage">
+                <img class="authorHeadimg img-circle" width="80px" height="80px" style="opacity:0.8;" >
+                <br>
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <div class="author"></div>
+            </a>
+            <br>
+            &nbsp;&nbsp;&nbsp;关注：
+            <div class="totalfollow"></div>
+            <br>
+        </div>
+        <!--文章信息-->
+        <div class="col-md-5 column">
+            <div class="page-header">
+                <h1>
+                    &nbsp;&nbsp;
+                    <div class="title"></div>
+                    <small class="detailedTime"></small>
+                </h1>
+            </div>
+            标签：<div class="label"></div>
+            <br>
+            点赞：<div class="totalLike"></div>
+            收藏：<div class="totalCollect"></div>
+        </div>
+        <!--配图-->
+        <div class="col-md-5 column">
+            <img class="media-object picture" width="450px" height="225px"/>
+        </div>
+        <br>
+        <!--文章正文-->
+        <pre class="prettyprint concent"></pre>
+    </div>
+
+</div>
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="https://cdn.bootcss.com/prettify/r298/prettify.js"></script>
+</body>
+</html>

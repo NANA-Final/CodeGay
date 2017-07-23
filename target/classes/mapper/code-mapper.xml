@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jishaokang.dao.CodeDao">
+    <resultMap id="CodeResult" type="jishaokang.model.Code">
+        <result column="codeId" property="codeId"/>
+        <result column="codeName" property="codeName"/>
+        <result column="folderId" property="folderId"/>
+        <result column="content" property="content"/>
+        <result column="codeTime" property="codeTime"/>
+    </resultMap>
+    <insert id="insert" parameterType="jishaokang.model.Code" useGeneratedKeys="true" keyProperty="codeId">
+        INSERT INTO code (codeName,folderId,content,codeTime)
+        VALUES (#{codeName},#{folderId},#{content},#{codeTime})
+    </insert>
+    <delete id="delete" parameterType="int">
+        DELETE FROM code
+        WHERE codeId=#{codeId}
+    </delete>
+    <update id="update" parameterType="jishaokang.model.Code">
+        UPDATE code SET codeName=#{codeName},folderId=#{folderId},content=#{content},codeTime=#{codeTime}
+        WHERE codeId=#{codeId}
+    </update>
+    <select id="selectByCodeId" parameterType="int" resultType="jishaokang.model.Code">
+        SELECT * FROM code
+        WHERE codeId=#{codeId}
+    </select>
+    <select id="selectByFolderId" parameterType="int" resultMap="CodeResult">
+        SELECT * FROM code
+        WHERE folderId=#{folderId}
+    </select>
+</mapper>

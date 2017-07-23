@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>用户主页</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="http://120.24.70.191:8080/CodeBoy/css/bootstrap.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/prettify/r298/prettify.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+
+    <!--导航栏--------------------------------------------------------------------------------------->
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <nav class="navbar navbar-default" role="navigation">
+                <!--logo-->
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">
+                        <img src="http://120.24.70.191:8080/CodeBoy/images/logo.png" width="100px" height="50px" style="padding-bottom: 20px" >
+                    </a>
+                </div>
+                <!--功能区：首页 文章 代码 好友 交流 设置-->
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="active">
+                            <a href="http://120.24.70.191:8080/CodeBoy/user">首页</a>
+                        </li>
+                        <li >
+                            <a href="http://120.24.70.191:8080/CodeBoy/article">文章</a>
+                        </li>
+                        <li>
+                            <a href="http://120.24.70.191:8080/CodeBoy/code">代码</a>
+                        </li>
+                        <li>
+                            <a href="http://120.24.70.191:8080/CodeBoy/friend">好友</a>
+                        </li>
+                        <li>
+                            <a href="http://120.24.70.191:8080/CodeBoy/discuss">讨论</a>
+                        </li>
+                        <li>
+                            <a href="http://120.24.70.191:8080/CodeBoy/user/setting">设置</a>
+                        </li>
+                    </ul>
+                    <!--用户选项-->
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown">
+                                <span class="username"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a onclick="unlogin()">注销</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+
+    <div class="row clearfix">
+        <!--用户-->
+        <div class="col-md-4 column">
+            <div class="jumbotron" style="padding: 10px 15px;background-color: #f9f9f9;border:1px solid #dddddd">
+                <div class="row clearfix">
+                    <div class="col-md-3 column">
+                        <img id="headimg" class="img-circle" width="75px" height="75px" style="opacity:0.8;" >
+                    </div>
+                    <div class="col-md-9 column">
+                        <h4>
+                            &nbsp;&nbsp;&nbsp;&nbsp;你好，<br><br>&nbsp;&nbsp;&nbsp;
+                            &nbsp;<span class="author"></span>&nbsp;&nbsp;:-)
+                        </h4>
+                    </div>
+                </div>
+                <br>
+
+            </div>
+        </div>
+        <!--消息-->
+        <div class="col-md-8 column">
+            <table class="table table-striped">
+                <caption>最近</caption>
+                <tbody id="notice_result">
+
+                </tbody>
+            </table>
+        </div>
+        <!--用户内容-->
+        <div class="row clearfix">
+            <!--文章页-->
+            <div class="col-md-8 column">
+                <ul class="nav nav-tabs">
+                    <li id="new_box">
+                        <a onclick="getNewArticle()">最新</a>
+                    </li>
+                    <li id="hot_box">
+                        <a onclick="getHotArticle()">热门</a>
+                    </li>
+                    <li id="follow_box">
+                        <a onclick="getFollowArticle()">关注</a>
+                    </li>
+                    <li id="collection_box">
+                        <a onclick="getCollection()">收藏</a>
+                    </li>
+                    <li id="like_box">
+                        <a onclick="getLike()">点赞</a>
+                    </li>
+                    <li id="article_box">
+                        <a onclick="getArticleByAuthorId()">原创</a>
+                    </li>
+                    <form class="navbar-form navbar-left" role="search">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="search_title" />
+                        </div>
+                        <a onclick="getArticleByTitle()" class="btn btn-default">搜索</a>
+                    </form>
+                    <li class="pull-right">
+                        <a onclick="window.open('http://120.24.70.191:8080/CodeBoy/article/new_article')">
+                            <img src="http://120.24.70.191:8080/CodeBoy/images/add.png" class="img-circle" width="22.5px" height="22.5px" style="opacity:1;" >
+                        </a>
+                    </li>
+                </ul>
+                <!--文章搜索结果--->
+                <div class="row clearfix">
+                    <div class="col-md-12 column" id="find_result">
+
+                    </div>
+                </div>
+                <!--分页-->
+                <br>
+                <button class="btn btn-default" onclick="" id="more">更多</button>
+            </div>
+            <!--交流区-->
+            <div class="col-md-4 column">
+                <ul class="nav nav-tabs">
+                    <li id="new_discuss_box">
+                        <a onclick="getDiscuss()">最新讨论</a>
+                    </li>
+                    <li id="my_discuss_box">
+                        <a onclick="getDiscussByUserId()">我的讨论</a>
+                    </li>
+                    <li id="my_reply_box">
+                        <a onclick="getReplyByUserId()">我的回复</a>
+                    </li>
+                </ul>
+                <br>
+                <div id="discuss_result">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="http://120.24.70.191:8080/CodeBoy/js/jquery.min.js"></script>
+    <script src="http://120.24.70.191:8080/CodeBoy/js/bootstrap.min.js"></script>
+    <script src="https://cdn.bootcss.com/prettify/r298/prettify.js"></script>
+    <script>
+        var userId,username="季韶康",headimg,articleId,authorId,startnum,current;
+        /*获取用户信息*/
+        function init(){
+            $.post("http://120.24.70.191:8080/CodeBoy/back_end/user/get_user_information",
+                function(result){
+                    username = result.data.username;
+                    userId = result.data.userId;
+                    $(".username").html(username);
+                    $(".author").html(result.data.username);
+                    $(".totalFollow").html(result.data.totalFollow);
+                    $(".totalFollower").html(result.data.totalFollower);
+                    $("img#headimg").attr("src",result.data.headimg);
+                    getNewArticle();
+                    startnum = 0;
+                    current = "getNewArticle";
+                    getDiscuss();
+                    getNotice();
+                });
+        }
+        /*注销*/
+        function unlogin() {
+            $.post("http://120.24.70.191:8080/CodeBoy/back_end/user/unlogin",
+                function(data){
+                    alert(data.message);
+                    window.location.href="http://120.24.70.191:8080/CodeBoy/user/login";
+                });
+        }
+
+
+        function getArticleByAuthorId(){
+            $("#new_box").removeClass("active");
+            $("#hot_box").removeClass("active");
+            $("#follow_box").removeClass("active");
+            $("#article_box").addClass("active");
+            $("#collection_box").removeClass("active");
+            $("#like_box").removeClass("active");
+            document.getElementById("more").onclick=function() {
+                getArticleByAuthorId();};
+            if (current!="getArticleByAuthorId") {
+                $("#find_result").html("");
+                current="getArticleByAuthorId";
+                startnum=0;
+            }else{
+                startnum=startnum+10;
+            }
+            $.post("http://120.24.70.191:8080/CodeBoy/back_end/article/get_article_by_authorId",{authorId:userId},
+                function(result){
+                    if (startnum>=result.data.length) $("#find_result").append("到底啦");
+                    for (var i=startnum;i<startnum+10;i++)
+                        if (i<result.data.length){
+                            $("#find_result").append(
+                                "<div class=\"media\" style=\"padding:20px;border:1px solid #dddddd\">"+
+                                "   <a class=\"pull-left\">"+
+                                "       <img src=\""+result.data[i].picture+"\" class=\"media-object\" width=\"140px\" height=\"80px\" />"+
+                                "   </a>"+
+                                "   <div class=\"media-body\">"+
+                                "       <div class=\"media-heading\">"+
+                                "           <a onclick=\"window.open('http://120.24.70.191:8080/CodeBoy/article/article_detail?articleId="+result.data[i].articleId+"')\" style=\"font-size: 25px;text-align:left\" >"+
+                                result.data[i].title+
+                                "           </a>&nbsp;&nbsp;"+
+                                "           <a onclick=\"window.open('http://120.24.70.191:8080/CodeBoy/article/get_article?authorId="+result.data[i].authorId+"')\" style=\"text-align: right\" > 作者:"+
+                                result.data[i].author+
+                                "            </a>&nbsp;"+
+                                "           <a onclick=\"getArticleByAuthorAndLabel(\'"+result.data[i].label+"\')\" style=\"text-align: right\" > 标签:"+
+                                result.data[i].label+
+                                "            </a>&nbsp;"+
+                                "            <span style=\"text-align: right\" >点赞:"+
+                                result.data[i].totalLike+
+                                "            </span>"+
+                                "            <span style=\"text-align: right\" >收藏:"+
+                                result.data[i].totalCollect+
+                                "            </span>"+
+                                "            <span style=\"text-align: right\" >"+
+                                result.data[i].detailedTime+
+                                "            </span>"+
+                                "        </div>"+
+                                "        <p>"+
+                                result.data[i].content.substring(0,50)+
+                                "        ......</p>"+
+                                "    </div>"+
+                                "</div>");
+                        }
+                });
+        }
+        function getArticleByTitle(){
+            $("#new_box").removeClass("active");
+            $("#hot_box").removeClass("active");
+            $("#follow_box").removeClass("active");
+            $("#article_box").removeClass("active");
+            $("#collection_box").removeClass("active");
+            $("#like_box").removeClass("active");
+            var searchTitle = $("#search_title").val();
+            document.getElementById("more").onclick=function() {
+                getArticleByTitle();};
+            if (current!="getArticleByTitle") {
+                $("#find_result").html("");
+                current="getArticleByTitle";
+                startnum=0;
+            }else{
+                startnum=startnum+10;
+            }
+            $.post("http://120.24.70.191:8080/CodeBoy/back_end/article/get_article_by_title",{title:searchTitle},
+                function(result){
+                    if (startnum>=result.data.length) $("#find_result").append("到底啦");
+                    for (var i=startnum;i<startnum+10;i++)
+                        if (i<result.data.length){
+                            $("#find_result").append(
+                                "<div class=\"media\" style=\"padding:20px;border:1px solid #dddddd\">"+
+                                "   <a class=\"pull-left\">"+
+                                "       <img src=\""+result.data[i].picture+"\" class=\"media-object\" width=\"140px\" height=\"80px\" />"+
+                                "   </a>"+
+                                "   <div class=\"media-body\">"+
+                                "       <div class=\"media-heading\">"+
+                                "           <a onclick=\"window.open('http://120.24.70.191:8080/CodeBoy/article/article_detail?articleId="+result.data[i].articleId+"')\" style=\"font-size: 25px;text-align:left\" >"+
+                                result.data[i].title+
+                                "           </a>&nbsp;&nbsp;"+
+                                "           <a onclick=\"window.open('http://120.24.70.191:8080/CodeBoy/article/get_article?authorId="+result.data[i].authorId+"')\" style=\"text-align: right\" > 作者:"+
+                                result.data[i].author+
+                                "            </a>&nbsp;"+
+                                "           <a onclick=\"window.open('http://120.24.70.191:8080/CodeBoy/article/get_article?authorId="+result.data[i].authorId+"')\" style=\"text-align: right\" > 标签:"+
+                                result.data[i].label+
+                                "            </a>&nbsp;"+
+                                "            <span style=\"text-align: right\" >点赞:"+
+                                result.data[i].totalLike+
+                                "            </span>"+
+                                "            <span style=\"text-align: right\" >收藏:"+
+                                result.data[i].totalCollect+
+                                "            </span>"+
+                                "            <span style=\"text-align: right\" >"+
+                                result.data[i].detailedTime+
+                                "            </span>"+
+                                "        </div>"+
+                                "        <p>"+
+                                result.data[i].content.substring(0,50)+
+                                "        ......</p>"+
+                                "    </div>"+
+                                "</div>");
+                        }
+                });
+        }
+        function getCollection(){
+            $("#new_box").removeClass("active");
+            $("#hot_box").removeClass("active");
+            $("#follow_box").removeClass("active");
+            $("#article_box").removeClass("active");
+            $("#collection_box").addClass("active");
+            $("#like_box").removeClass("active");
+            document.getElementById("more").onclick=function() {
+                getCollection();};
+            if (current!="getCollection") {
+                $("#find_result").html("");
+                current="getCollection";
+                startnum=0;
+            }else{
+                startnum=startnum+10;
+            }
+            $.post("http://120.24.70.191:8080/CodeBoy/back_end/article/get_collection",{userId:userId},
+                function(result){
+                    if (startnum>=result.data.length) $("#find_result").append("到底啦");
+                    for (var i=startnum;i<startnum+10;i++)
+                        if (i<result.data.length){
+                            $("#find_result").append(
+                                "<div class=\"media\" style=\"padding:20px;border:1px solid #dddddd\">"+
+                                "   <a class=\"pull-left\">"+
+                                "       <img src=\""+result.data[i].picture+"\" class=\"media-object\" width=\"140px\" height=\"80px\" />"+
+                                "   </a>"+
+                                "   <div class=\"media-body\">"+
+                                "       <div class=\"media-heading\">"+
+                                "           <a onclick=\"window.open('http://120.24.70.191:8080/CodeBoy/article/article_detail?articleId="+result.data[i].articleId+"')\" style=\"font-size: 25px;text-align:left\" >"+
+                                result.data[i].title+
+                                "           </a>&nbsp;&nbsp;"+
+                                "           <a onclick=\"window.open('http://120.24.70.191:8080/CodeBoy/article/get_article?authorId="+result.data[i].authorId+"')\" style=\"text-align: right\" > 作者:"+
+                                result.data[i].author+
+                                "            </a>&nbsp;"+
+                                "           <a onclick=\"window.open('http://120.24.70.191:8080/CodeBoy/article/get_article?authorId="+result.data[i].authorId+"')\" style=\"text-align: right\" > 标签:"+
+                                result.data[i].label+
+                                "            </a>&nbsp;"+
+                                "            <span style=\"text-align: right\" >点赞:"+
+                                result.data[i].totalLike+
+                                "            </span>"+
+                                "            <span style=\"text-align: right\" >收藏:"+
+                                result.data[i].totalCollect+
+                                "            </span>"+
+                                "            <span style=\"text-align: right\" >"+
+                                result.data[i].detailedTime+
+                                "            </span>"+
+                                "        </div>"+
+                                "        <p>"+
+                                result.data[i].content.substring(0,50)+
+                                "        ......</p>"+
+                                "    </div>"+
+                                "</div>");
+                        }
+                });
+        }
+        function getLike(){
+            $("#new_box").removeClass("active");
+            $("#hot_box").removeClass("active");
+            $("#follow_box").removeClass("active");
+            $("#article_box").removeClass("active");
+            $("#collection_box").removeClass("active");
+            $("#like_box").addClass("active");
+            document.getElementById("more").onclick=function() {
+                getLike();};
+            if (current!="getLike") {
+                $("#find_result").html("");
+                current="getLike";
+                startnum=0;
+            }else{
+                startnum=startnum+10;
+            }
+            $.post("http://120.24.70.191:8080/CodeBoy/back_end/article/get_like",{userId:userId},
+                function(result){
+                    if (startnum>=result.data.length) $("#find_result").append("到底啦");
+                    for (var i=startnum;i<startnum+10;i++)
+                        if (i<result.data.length){
+                            $("#find_result").append(
+                                "<div class=\"media\" style=\"padding:20px;border:1px solid #dddddd\">"+
+                                "   <a class=\"pull-left\">"+
+                                "       <img src=\""+result.data[i].picture+"\" class=\"media-object\" width=\"140px\" height=\"80px\" />"+
+                                "   </a>"+
+                                "   <div class=\"media-body\">"+
+                                "       <div class=\"media-heading\">"+
+                                "           <a onclick=\"window.open('http://120.24.70.191:8080/CodeBoy/article/article_detail?articleId="+result.data[i].articleId+"')\" style=\"font-size: 25px;text-align:left\" >"+
+                                result.data[i].title+
+                                "           </a>&nbsp;&nbsp;"+
+                                "           <a onclick=\"window.open('http://120.24.70.191:8080/CodeBoy/article/get_article?authorId="+result.data[i].authorId+"')\" style=\"text-align: right\" > 作者:"+
+                                result.data[i].author+
+                                "            </a>&nbsp;"+
+                                "           <a onclick=\"window.open('http://120.24.70.191:8080/CodeBoy/article/get_article?authorId="+result.data[i].authorId+"')\" style=\"text-align: right\" > 标签:"+
+                                result.data[i].label+
+                                "            </a>&nbsp;"+
+                                "            <span style=\"text-align: right\" >点赞:"+
+                                result.data[i].totalLike+
+                                "            </span>"+
+                                "            <span style=\"text-align: right\" >收藏:"+
+                                result.data[i].totalCollect+
+                                "            </span>"+
+                                "            <span style=\"text-align: right\" >"+
+                                result.data[i].detailedTime+
+                                "            </span>"+
+                                "        </div>"+
+                                "        <p>"+
+                                result.data[i].content.substring(0,50)+
+                                "        ......</p>"+
+                                "    </div>"+
+                                "</div>");
+                        }
+                });
+        }
+        function getNewArticle(){
+            $("#new_box").addClass("active");
+            $("#hot_box").removeClass("active");
+            $("#follow_box").removeClass("active");
+            $("#article_box").removeClass("active");
+            $("#collection_box").removeClass("active");
+            $("#like_box").removeClass("active");
+            document.getElementById("more").onclick=function() {
+                getNewArticle();};
+            if (current!="getNewArticle") {
+                $("#find_result").html("");
+                current="getNewArticle";
+                startnum=0;
+            }else{
+                startnum=startnum+10;
+            }
+            $.post("http://120.24.70.191:8080/CodeBoy/back_end/article/get_new_article",
+                function(result){
+                    if (startnum>=result.data.length) $("#find_result").append("到底啦");
+                    for (var i=startnum;i<startnum+10;i++)
+                        if (i<result.data.length){
+                            $("#find_result").append(
+                                "<div class=\"media\" style=\"padding:20px;border:1px solid #dddddd\">"+
+                                "   <a class=\"pull-left\">"+
+                                "       <img src=\""+result.data[i].picture+"\" class=\"media-object\" width=\"140px\" height=\"80px\" />"+
+                                "   </a>"+
+                                "   <div class=\"media-body\">"+
+                                "       <div class=\"media-heading\">"+
+                                "           <a onclick=\"window.open('http://120.24.70.191:8080/CodeBoy/article/article_detail?articleId="+result.data[i].articleId+"')\" style=\"font-size: 25px;text-align:left\" >"+
+                                result.data[i].title+
+                                "           </a>&nbsp;&nbsp;"+
+                                "           <a onclick=\"window.open('http://120.24.70.191:8080/CodeBoy/article/get_article?authorId="+result.data[i].authorId+"')\" style=\"text-align: right\" > 作者:"+
+                                result.data[i].author+
+                                "            </a>&nbsp;"+
+                                "           <a onclick=\"getArticleByAuthorAndLabel(\'"+result.data[i].label+"\')\" style=\"text-align: right\" > 标签:"+
+                                result.data[i].label+
+                                "            </a>&nbsp;"+
+                                "            <span style=\"text-align: right\" >点赞:"+
+                                result.data[i].totalLike+
+                                "            </span>"+
+                                "            <span style=\"text-align: right\" >收藏:"+
+                                result.data[i].totalCollect+
+                                "            </span>"+
+                                "            <span style=\"text-align: right\" >"+
+                                result.data[i].detailedTime+
+                                "            </span>"+
+                                "        </div>"+
+                                "        <p>"+
+                                result.data[i].content.substring(0,50)+
+                                "        ......</p>"+
+                                "    </div>"+
+                                "</div>");
+                        }
+                });
+        }
+        function getHotArticle(){
+            $("#new_box").removeClass("active");
+            $("#hot_box").addClass("active");
+            $("#follow_box").removeClass("active");
+            $("#article_box").removeClass("active");
+            $("#collection_box").removeClass("active");
+            $("#like_box").removeClass("active");
+            document.getElementById("more").onclick=function() {
+                getHotArticle();};
+            if (current!="getHotArticle") {
+                $("#find_result").html("");
+                current="getHotArticle";
+                startnum=0;
+            }else{
+                startnum=startnum+10;
+            }
+            $.post("http://120.24.70.191:8080/CodeBoy/back_end/article/get_hot_article",
+                function(result){
+                    if (startnum>=result.data.length) $("#find_result").append("到底啦");
+                    for (var i=startnum;i<startnum+10;i++)
+                        if (i<result.data.length){
+                            $("#find_result").append(
+                                "<div class=\"media\" style=\"padding:20px;border:1px solid #dddddd\">"+
+                                "   <a class=\"pull-left\">"+
+                                "       <img src=\""+result.data[i].picture+"\" class=\"media-object\" width=\"140px\" height=\"80px\" />"+
+                                "   </a>"+
+                                "   <div class=\"media-body\">"+
+                                "       <div class=\"media-heading\">"+
+                                "           <a onclick=\"window.open('http://120.24.70.191:8080/CodeBoy/article/article_detail?articleId="+result.data[i].articleId+"')\" style=\"font-size: 25px;text-align:left\" >"+
+                                result.data[i].title+
+                                "           </a>&nbsp;&nbsp;"+
+                                "           <a onclick=\"window.open('http://120.24.70.191:8080/CodeBoy/article/get_article?authorId="+result.data[i].authorId+"')\" style=\"text-align: right\" > 作者:"+
+                                result.data[i].author+
+                                "            </a>&nbsp;"+
+                                "           <a onclick=\"getArticleByAuthorAndLabel(\'"+result.data[i].label+"\')\" style=\"text-align: right\" > 标签:"+
+                                result.data[i].label+
+                                "            </a>&nbsp;"+
+                                "            <span style=\"text-align: right\" >点赞:"+
+                                result.data[i].totalLike+
+                                "            </span>"+
+                                "            <span style=\"text-align: right\" >收藏:"+
+                                result.data[i].totalCollect+
+                                "            </span>"+
+                                "            <span style=\"text-align: right\" >"+
+                                result.data[i].detailedTime+
+                                "            </span>"+
+                                "        </div>"+
+                                "        <p>"+
+                                result.data[i].content.substring(0,50)+
+                                "        ......</p>"+
+                                "    </div>"+
+                                "</div>");
+                        }
+                });
+        }
+        function getFollowArticle(){
+            $("#new_box").removeClass("active");
+            $("#hot_box").removeClass("active");
+            $("#follow_box").addClass("active");
+            $("#article_box").removeClass("active");
+            $("#collection_box").removeClass("active");
+            $("#like_box").removeClass("active");
+            document.getElementById("more").onclick=function() {
+                getFollowArticle();};
+            if (current!="getFollowArticle") {
+                $("#find_result").html("");
+                current="getFollowArticle";
+                startnum=0;
+            }else{
+                startnum=startnum+10;
+            }
+            $.post("http://120.24.70.191:8080/CodeBoy/back_end/article/get_follow",{userId:userId},
+                function(result){
+                    if (startnum>=result.data.length) $("#find_result").append("到底啦");
+                    for (var i=startnum;i<startnum+10;i++)
+                        if (i<result.data.length){
+                            $("#find_result").append(
+                                "<div class=\"media\" style=\"padding:20px;border:1px solid #dddddd\">"+
+                                "   <a class=\"pull-left\">"+
+                                "       <img src=\""+result.data[i].picture+"\" class=\"media-object\" width=\"140px\" height=\"80px\" />"+
+                                "   </a>"+
+                                "   <div class=\"media-body\">"+
+                                "       <div class=\"media-heading\">"+
+                                "           <a onclick=\"window.open('http://120.24.70.191:8080/CodeBoy/article/article_detail?articleId="+result.data[i].articleId+"')\" style=\"font-size: 25px;text-align:left\" >"+
+                                result.data[i].title+
+                                "           </a>&nbsp;&nbsp;"+
+                                "           <a onclick=\"window.open('http://120.24.70.191:8080/CodeBoy/article/get_article?authorId="+result.data[i].authorId+"')\" style=\"text-align: right\" > 作者:"+
+                                result.data[i].author+
+                                "            </a>&nbsp;"+
+                                "           <a onclick=\"getArticleByAuthorAndLabel(\'"+result.data[i].label+"\')\" style=\"text-align: right\" > 标签:"+
+                                result.data[i].label+
+                                "            </a>&nbsp;"+
+                                "            <span style=\"text-align: right\" >点赞:"+
+                                result.data[i].totalLike+
+                                "            </span>"+
+                                "            <span style=\"text-align: right\" >收藏:"+
+                                result.data[i].totalCollect+
+                                "            </span>"+
+                                "            <span style=\"text-align: right\" >"+
+                                result.data[i].detailedTime+
+                                "            </span>"+
+                                "        </div>"+
+                                "        <p>"+
+                                result.data[i].content.substring(0,50)+
+                                "        ......</p>"+
+                                "    </div>"+
+                                "</div>");
+                        }
+                });
+        }
+        function getDiscuss(){
+            $("#new_discuss_box").addClass("active");
+            $("#my_discuss_box").removeClass("active");
+            $("#my_reply_box").removeClass("active");
+            $("#discuss_result").html("");
+            $.post("http://120.24.70.191:8080/CodeBoy/back_end/discuss/get_discuss",
+                function(result){
+                    for (var i = 0;i<result.discusses.length;i++) if (i<10)
+                    {
+                        $("#discuss_result").append(
+                            "<div class=\"panel panel-default\"> <div class=\"panel-heading\"> <div class=\"panel-title\">"+
+                            "<a onclick=\"window.open(\'http://120.24.70.191:8080/CodeBoy/discuss/discuss_detail?discussId="+result.discusses[i].discussId+"\')\">"+
+                            result.discusses[i].title+ "</a>"+
+                            "&nbsp;&nbsp;&nbsp;by&nbsp;"+
+                            "<a onclick=\"window.open(\'http://120.24.70.191:8080/CodeBoy/discuss/get_discuss?discusserId="+result.discussers[i].userId+"\')\">"+
+                            result.discussers[i].username+
+                            "</a> &nbsp;&nbsp;"+"回复: "+result.discusses[i].totalReply+"&nbsp;&nbsp;&nbsp;"+
+                            result.discusses[i].discussTime+
+                            "</div> </div> <div class=\"panel-body\">"+
+                            result.replies[i].content.substring(0,20)+
+                            "...</div> <div class=\"panel-footer\">"+
+                            "<a onclick=\"window.open(\'http://120.24.70.191:8080/CodeBoy/discuss/get_discuss?discusserId="+result.replyers[i].userId+"\')\">"+
+                            result.replyers[i].username+
+                            "</a> <span>"+
+                            result.replies[i].replyTime+
+                            "</span> </div> </div>")
+                    }
+                });
+        }
+        function getDiscussByUserId(){
+            $("#new_discuss_box").removeClass("active");
+            $("#my_discuss_box").addClass("active");
+            $("#my_reply_box").removeClass("active");
+            $("#discuss_result").html("");
+            $.post("http://120.24.70.191:8080/CodeBoy/back_end/discuss/get_discuss_by_userId",{userId:userId},
+                function(result){
+                    for (var i = 0;i<result.discusses.length;i++) if (i<10)
+                    {
+                        $("#discuss_result").append(
+                            "<div class=\"panel panel-default\"> <div class=\"panel-heading\"> <div class=\"panel-title\">"+
+                            "<a onclick=\"window.open(\'http://120.24.70.191:8080/CodeBoy/discuss/discuss_detail?discussId=\'"+result.discusses[i].discussId+")\">"+
+                            result.discusses[i].title+ "</a>"+
+                            "&nbsp;&nbsp;&nbsp;by&nbsp;"+
+                            "<a onclick=\"window.open(\'http://120.24.70.191:8080/CodeBoy/discuss/get_discuss?userId=\'"+result.discussers[i].userId+")\">"+
+                            result.discussers[i].username+
+                            "</a> &nbsp;&nbsp;"+"回复: "+result.discusses[i].totalReply+"&nbsp;&nbsp;&nbsp;"+
+                            result.discusses[i].discussTime+
+                            "</div> </div> <div class=\"panel-body\">"+
+                            result.replies[i].content.substring(0,20)+
+                            "...</div> <div class=\"panel-footer\">"+
+                            "<a onclick=\"window.open(\'http://120.24.70.191:8080/CodeBoy/discuss/get_discuss?userId=\'"+result.replyers[i].userId+")\">"+
+                            result.replyers[i].username+
+                            "</a> <span>"+
+                            result.replies[i].replyTime+
+                            "</span> </div> </div>")
+                    }
+                });
+        }
+        function getReplyByUserId(){
+            $("#new_discuss_box").removeClass("active");
+            $("#my_discuss_box").removeClass("active");
+            $("#my_reply_box").addClass("active");
+            $("#discuss_result").html("");
+            $.post("http://120.24.70.191:8080/CodeBoy/back_end/reply/get_reply_by_userId",{userId:userId},
+                function(result){
+                    for (var i = 0;i<result.discusses.length;i++) if (i<10)
+                    {
+                        $("#discuss_result").append(
+                            "<div class=\"panel panel-default\"> <div class=\"panel-heading\"> <div class=\"panel-title\">"+
+                            "<a onclick=\"window.open(\'http://120.24.70.191:8080/CodeBoy/discuss/discuss_detail?discussId=\'"+result.discusses[i].discussId+")\">"+
+                            result.discusses[i].title+ "</a>"+
+                            "&nbsp;&nbsp;&nbsp;by&nbsp;"+
+                            "<a onclick=\"window.open(\'http://120.24.70.191:8080/CodeBoy/discuss/get_discuss?userId=\'"+result.discussers[i].userId+")\">"+
+                            result.discussers[i].username+
+                            "</a> &nbsp;&nbsp;"+"回复: "+result.discusses[i].totalReply+"&nbsp;&nbsp;&nbsp;"+
+                            result.discusses[i].discussTime+
+                            "</div> </div> <div class=\"panel-body\">"+
+                            result.replies[i].content.substring(0,20)+
+                            "...</div> <div class=\"panel-footer\">"+
+                            "<a onclick=\"window.open(\'http://120.24.70.191:8080/CodeBoy/discuss/get_discuss?userId=\'"+result.replyers[i].userId+")\">"+
+                            result.replyers[i].username+
+                            "</a> <span>"+
+                            result.replies[i].replyTime+
+                            "</span> </div> </div>")
+                    }
+                });
+        }
+        function getNotice(){
+            $.post("http://120.24.70.191:8080/CodeBoy/back_end/notice/get_notice_by_noticerId",{noticerId:userId},
+                function(result){
+                    for (var i = 0;i<result.data.length;i++) if(i<3)
+                    {
+                        $("#notice_result").append(
+                            "<tr> <td>"+
+                            result.data[i].noticeTime+
+                            "</td> <td>"+
+                            "<a href=\""+result.data[i].noticeUrl+"\">"+result.data[i].content+"</a>"+
+                            "</td> </tr>")
+                    }
+                });
+        }
+        init();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>代码详情</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/prettify/r298/prettify.css" rel="stylesheet">
+</head>
+<body onload="prettyPrint()">
+<div class="container">
+    <!--导航栏-->
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="navbar-header">
+                    <!--自适应导航栏-->
+                    <a class="navbar-brand" href="#">
+                        <img src="logo.png" width="100px" height="50px" style="padding-bottom: 20px" >
+                    </a>
+                </div>
+                <!--功能区：首页 文章 代码 好友 交流 设置-->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li >
+                            <a href="#">首页</a>
+                        </li>
+                        <li >
+                            <a href="#">文章</a>
+                        </li>
+                        <li class="active">
+                            <a href="#">代码</a>
+                        </li>
+                        <li>
+                            <a href="#">好友</a>
+                        </li>
+                        <li>
+                            <a href="#">交流</a>
+                        </li>
+                        <li>
+                            <a href="#">设置</a>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">季韶康<strong class="caret"></strong></a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="#">注销</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <div class="row clearfix">
+                <div class="col-md-11 column">
+                    <ul class="breadcrumb">
+                        <li>
+                            <a href="#">代码</a>
+                        </li>
+                        <li>
+                            <a href="#">java</a>
+                        </li>
+                        <li class="active">
+                            shili.pas
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-1 column">
+                    <a href="#">
+                        <img src="add.png" class="img-circle" width="22.5px" height="22.5px" style="opacity:1;" >
+                    </a>
+                </div>
+            </div>
+            <div class="row clearfix">
+                <div class="col-md-12 column">
+                    <div class="page-header">
+                        <h1>
+                            shili.java
+                            <small>
+                                2014.1.1&nbsp;&nbsp;&nbsp;by&nbsp;&nbsp;季韶康
+                            </small>
+                        </h1>
+                    </div>
+                    一个示例程序
+                </div>
+            </div>
+
+
+            <br>
+            <pre class="prettyprint">
+program h1528;
+  var
+    tot,ans,i,k,n,p:longint;
+    a,next:array [0..500001] of longint;
+    opt,point,h,home:array [0..100001] of longint;
+    f:array [0..100001] of boolean;
+  procedure swap(i,j:longint);
+    var
+      o:longint;
+    begin
+      o:=h[i];h[i]:=h[j];h[j]:=o;
+      o:=home[i];home[i]:=home[j];home[j]:=o;
+      opt[home[i]]:=i;opt[home[j]]:=j;
+    end;
+  procedure up(k:longint);
+    var
+      i,j:longint;
+    begin
+      i:=k;
+      while i<>1 do
+        begin
+          j:=i shr 1;
+          if h[i]>h[j] then
+            begin
+              swap(i,j);
+              i:=j;
+            end
+                       else break;
+        end;
+    end;
+  procedure down(k:longint);
+    var
+      i,j:longint;
+    begin
+      i:=k;
+      j:=i shl 1;
+      while j<=tot do
+        begin
+          if (jtot)and(h[j]h[j+1]) then inc(j);
+          if h[i]h[j] then
+            begin
+              swap(i,j);
+              i:=j;
+              j:=i shl 1;
+            end
+                       else break;
+        end;
+    end;
+  begin
+    read(n,k,p);
+    for i:=1 to p do read(a[i]);
+    for i:=1 to n do point[i]:=p+1;
+    for i:=p downto 1 do
+      begin
+        next[i]:=point[a[i]];
+        point[a[i]]:=i;
+      end;
+    tot:=0;
+    ans:=0;
+    fillchar(f,sizeof(f),false);
+    for i:=1 to p do
+      begin
+        if f[a[i]] then
+          begin
+            h[opt[a[i]]]:=next[i];
+            up(opt[a[i]]);
+            continue;
+          end;
+        if tot=k then
+          begin
+            f[a[h[1]]]:=false;
+            swap(1,tot);
+            dec(tot);
+            down(1);
+          end;
+        inc(tot);
+        inc(ans);
+        f[a[i]]:=true;
+        h[tot]:=next[i];
+        opt[a[i]]:=tot;
+        home[tot]:=a[i];
+        up(tot);
+      end;
+    writeln(ans);
+  end.
+            </pre>
+            <div class="row clearfix">
+                <div class="col-md-5 column">
+                </div>
+                <div class="col-md-5 column">
+                </div>
+                <div class="col-md-2 column">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="https://cdn.bootcss.com/prettify/r298/prettify.js"></script>
+</body>
+</html>

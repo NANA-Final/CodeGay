@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>讨论</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="http://120.24.70.191:8080/CodeBoy/css/bootstrap.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/prettify/r298/prettify.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <!--导航栏--------------------------------------------------------------------------------------->
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <nav class="navbar navbar-default" role="navigation">
+                <!--logo-->
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">
+                        <img src="http://120.24.70.191:8080/CodeBoy/images/logo.png" width="100px" height="50px" style="padding-bottom: 20px" >
+                    </a>
+                </div>
+                <!--功能区：首页 文章 代码 好友 交流 设置-->
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li>
+                            <a href="http://120.24.70.191:8080/CodeBoy/user">首页</a>
+                        </li>
+                        <li>
+                            <a href="http://120.24.70.191:8080/CodeBoy/article">文章</a>
+                        </li>
+                        <li>
+                            <a href="http://120.24.70.191:8080/CodeBoy/code">代码</a>
+                        </li>
+                        <li>
+                            <a href="http://120.24.70.191:8080/CodeBoy/friend">好友</a>
+                        </li>
+                        <li class="active">
+                            <a href="http://120.24.70.191:8080/CodeBoy/discuss">讨论</a>
+                        </li>
+                        <li>
+                            <a href="http://120.24.70.191:8080/CodeBoy/user/setting">设置</a>
+                        </li>
+                    </ul>
+                    <!--用户选项-->
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown">
+                                <span class="username"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a onclick="unlogin()">注销</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row clearfix">
+        <div class="col-md-3 column">
+
+            <!--用户信息-->
+            <div class="row clearfix" style="padding: 10px 15px;border:1px solid #dddddd">
+                <div class="col-md-5 column">
+                    <img id="headimg" class="img-circle" width="80px" height="80px" style="opacity:0.8;" >
+                </div>
+                <div class="col-md-7 column">
+                    <h3>你好，<br><span class="username"></span>~</h3>
+                </div>
+            </div>
+            <!--新建讨论-->
+            <br>
+            <textarea class="form-control" rows="5" id="content" placeholder="在此输入回复内容"></textarea>
+            <br>
+            <button class="btn btn-default" onclick="newReply()">发表回复</button>
+
+        </div>
+
+        <!--最近联系人-->
+        <div class="col-md-9 column">
+            <div class="page-header">
+                <h3>
+                    <span class="title"></span>
+                    <small>
+                        &nbsp;&nbsp;&nbsp;
+                        by&nbsp;
+                        <img id="discusser_headimg" class="img-circle" width="20px" height="20px">
+                        &nbsp;
+                        <span class="discusser_name"></span>
+                        &nbsp;&nbsp;回复：<span class="totalReply"></span>
+                        &nbsp;&nbsp;<span class="discusstime"></span>
+                    </small>
+                </h3>
+            </div>
+            <div id="reply_result">
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+<script src="http://120.24.70.191:8080/CodeBoy/js/jquery.min.js"></script>
+<script src="http://120.24.70.191:8080/CodeBoy/js/bootstrap.min.js"></script>
+<script>
+    var userId,username,receiverName,introduce,friendRequestId,senderId,friendingId,friendId,friendName;
+    /*获取用户信息*/
+    function init(){
+        $.post("http://120.24.70.191:8080/CodeBoy/back_end/user/get_user_information",
+            function(result){
+                username = result.data.username;
+                userId = result.data.userId;
+                $(".username").html(username);
+                $("#headimg").attr("src",result.data.headimg);
+                getDiscussInformation();
+            });
+    }
+    /*注销*/
+    function unlogin() {
+        $.post("http://120.24.70.191:8080/CodeBoy/back_end/user/unlogin",
+            function(data){
+                alert(data.message);
+                window.location.href="http://120.24.70.191:8080/CodeBoy/user/login";
+            });
+    }
+    function getTime() {
+        var date = new Date();
+        var seperator1 = "-";
+        var seperator2 = ":";
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+            + " " + date.getHours() + seperator2 + date.getMinutes();
+        return currentdate;
+    }
+    function newReply() {
+        content = $("#content").val();
+        $.post("http://120.24.70.191:8080/CodeBoy/back_end/reply/new_reply",
+            {replyerId:userId,discussId:discussId,content:content,replyTime:getTime()},
+            function(result){
+                alert(result.message);
+                getReply();
+            });
+    }
+    function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r != null) return unescape(r[2]); return null; //返回参数值
+    }
+    function getDiscussInformation() {
+        discussId = getUrlParam("discussId");
+        $.post("http://120.24.70.191:8080/CodeBoy/back_end/discuss/get_discuss_by_discussId",
+            {discussId:discussId},
+            function(result){
+                $(".title").html(result.discuss.title);
+                $(".discusser_name").html(result.discusser.username);
+                $(".totalReply").html(result.discuss.totalReply);
+                $(".discusstime").html(result.discuss.discussTime);
+                $("img#discusser_headimg").attr("src",result.discusser.headimg);
+                getReply();
+            });
+    }
+    function getReply(){
+        $("#reply_result").html("");
+        $.post("http://120.24.70.191:8080/CodeBoy/back_end/reply/get_reply_by_discussId",{discussId:discussId},
+            function(result){
+                for (var i = 0;i<result.replies.length;i++)
+                {
+                    $("#reply_result").append(
+                        "<div class=\"panel panel-default\"> <div class=\"panel-body\">"+
+                        result.replies[i].content+
+                        "</div> <div class=\"panel-footer\">"+
+                        "<a onclick=\"window.open(\'http://120.24.70.191:8080/CodeBoy/discuss/get_discuss?userId="+result.replyers[i].userId+"\')\">"+
+                        "<img src=\""+result.replyers[i].headimg+"\"class=\"img-circle\" width=\"20px\" height=\"20px\">&nbsp;"+
+                        result.replyers[i].username+
+                        "</a> <span>"+
+                        result.replies[i].replyTime+
+                        "</span> </div> </div>")
+                }
+            });
+    }
+    init();
+</script>
+</body>
+</html>

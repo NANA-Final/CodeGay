@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jishaokang.dao.ArticleDao">
+    <!--//id，标题，标签，时间，内容，图片，作者，点赞数，收藏数-->
+    <resultMap id="ArticleResult" type="jishaokang.model.Article">
+        <result column="articleId" property="articleId"/>
+        <result column="title" property="title"/>
+        <result column="label" property="label"/>
+        <result column="timeLabel" property="timeLabel"/>
+        <result column="detailedTime" property="detailedTime"/>
+        <result column="content" property="content"/>
+        <result column="picture" property="picture"/>
+        <result column="author" property="author"/>
+        <result column="authorId" property="authorId"/>
+        <result column="totalLike" property="totalLike"/>
+        <result column="totalCollect" property="totalCollect"/>
+    </resultMap>
+    <!--//新建文章，修改文章，删除文章，按照id查找文章，按标题关键字查找文章，按标签查找文章，按照用户名查找文章-->
+    <insert id="insert" parameterType="jishaokang.model.Article" useGeneratedKeys="true" keyProperty="articleId">
+        INSERT INTO article (title, label,timeLabel,detailedTime,content,author,authorId,picture,totalLike,totalCollect)
+        VALUES (#{title},#{label},#{timeLabel},#{detailedTime},#{content},#{author},#{authorId},#{picture},#{totalLike},#{totalCollect})
+    </insert>
+    <update id="update" parameterType="jishaokang.model.Article">
+        UPDATE article SET title=#{title},label=#{label},content=#{content},picture=#{picture}
+        WHERE articleId=#{articleId}
+    </update>
+    <delete id="delete" parameterType="int">
+        DELETE FROM article
+        WHERE articleId=#{articleId}
+    </delete>
+    <select id="selectByArticleId" parameterType="int" resultType="jishaokang.model.Article">
+        select * from article where articleId= #{articleId} ORDER BY articleId desc
+    </select>
+    <select id="selectByTitle" parameterType="string" resultMap="ArticleResult">
+        select * from article title LIKE CONCAT(CONCAT('%', #{title}), '%') ORDER BY articleId desc
+    </select>
+    <select id="selectByAuthorId" parameterType="int" resultMap="ArticleResult">
+        select * from article where authorId= #{authorId} ORDER BY articleId desc
+    </select>
+    <select id="selectByAuthorIdAndTitle" parameterType="java.util.Map" resultMap="ArticleResult">
+        select * from article where (authorId= #{authorId} AND (title LIKE CONCAT(CONCAT('%', #{title}), '%'))) ORDER BY articleId desc
+    </select>
+    <select id="selectByAuthorIdAndLabel" parameterType="java.util.Map" resultMap="ArticleResult">
+        select * from article where (authorId= #{authorId} AND label=#{label}) ORDER BY articleId desc
+    </select>
+    <select id="selectByAuthorIdAndTimeLabel" parameterType="java.util.Map" resultMap="ArticleResult">
+        select * from article where (authorId= #{authorId} AND timeLabel=#{timeLabel}) ORDER BY articleId desc
+    </select>
+
+    <update id="incCollection" parameterType="int" >
+        UPDATE article SET totalCollect = (totalCollect + 1) where articleId= #{articleId}
+    </update>
+
+    <update id="decCollection" parameterType="int" >
+        UPDATE article SET totalCollect= (totalCollect - 1) where articleId= #{articleId}
+    </update>
+
+    <select id="selectCollectionByUserId" parameterType="int" resultMap="ArticleResult">
+        SELECT collection.articleId,title,label,timeLabel,detailedTime,content,author,authorId,picture,totalLike,totalCollect
+        FROM collection LEFT JOIN article ON collection.articleId = article.articleId
+        WHERE collection.userId= #{userId}
+        ORDER BY articleId desc
+    </select>
+
+    <update id="incLike" parameterType="int" >
+        UPDATE article SET totalLike = (totalLike + 1) where articleId= #{articleId}
+    </update>
+
+    <update id="decLike" parameterType="int" >
+        UPDATE article SET totalLike= (totalLike - 1) where articleId= #{articleId}
+    </update>
+
+    <select id="selectLikeByUserId" parameterType="int" resultMap="ArticleResult">
+        SELECT likes.articleId,title,label,timeLabel,detailedTime,content,author,authorId,picture,totalLike,totalCollect
+        FROM likes LEFT JOIN article ON likes.articleId = article.articleId
+        WHERE likes.userId= #{userId}
+        ORDER BY articleId desc
+    </select>
+
+    <select id="selectByTime" resultMap="ArticleResult">
+        select * from article ORDER BY articleId desc
+    </select>
+
+    <select id="selectByLike" resultMap="ArticleResult">
+        select * from article ORDER BY totalLike desc
+    </select>
+
+    <select id="selectFollowByUserId" parameterType="int" resultMap="ArticleResult">
+        SELECT articleId,title,label,timeLabel,detailedTime,content,author,authorId,picture,totalLike,totalCollect
+        FROM follow LEFT JOIN article ON follow.userId = article.authorId
+        WHERE follow.followerId= #{userId}
+        ORDER BY articleId desc
+    </select>
+
+</mapper>

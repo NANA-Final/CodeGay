@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>好友</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="http://120.24.70.191:8080/CodeBoy/css/bootstrap.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/prettify/r298/prettify.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+      <!--导航栏--------------------------------------------------------------------------------------->
+      <div class="row clearfix">
+          <div class="col-md-12 column">
+              <nav class="navbar navbar-default" role="navigation">
+                  <!--logo-->
+                  <div class="navbar-header">
+                      <a class="navbar-brand" href="#">
+                          <img src="http://120.24.70.191:8080/CodeBoy/images/logo.png" width="100px" height="50px" style="padding-bottom: 20px" >
+                      </a>
+                  </div>
+                  <!--功能区：首页 文章 代码 好友 交流 设置-->
+                  <div class="collapse navbar-collapse">
+                      <ul class="nav navbar-nav">
+                          <li>
+                              <a href="http://120.24.70.191:8080/CodeBoy/user">首页</a>
+                          </li>
+                          <li>
+                              <a href="http://120.24.70.191:8080/CodeBoy/article">文章</a>
+                          </li>
+                          <li>
+                              <a href="http://120.24.70.191:8080/CodeBoy/code">代码</a>
+                          </li>
+                          <li class="active">
+                              <a href="http://120.24.70.191:8080/CodeBoy/friend">好友</a>
+                          </li>
+                          <li>
+                              <a href="http://120.24.70.191:8080/CodeBoy/discuss">讨论</a>
+                          </li>
+                          <li>
+                              <a href="http://120.24.70.191:8080/CodeBoy/user/setting">设置</a>
+                          </li>
+                      </ul>
+                      <!--用户选项-->
+                      <ul class="nav navbar-nav navbar-right">
+                          <li class="dropdown">
+                              <a class="dropdown-toggle" data-toggle="dropdown">
+                                  <span class="username"></span>
+                              </a>
+                              <ul class="dropdown-menu">
+                                  <li>
+                                      <a onclick="unlogin()">注销</a>
+                                  </li>
+                              </ul>
+                          </li>
+                      </ul>
+                  </div>
+              </nav>
+          </div>
+      </div>
+
+      <div class="row clearfix">
+          <div class="col-md-3 column">
+
+              <!--用户信息-->
+              <div class="row clearfix" style="padding: 10px 15px;border:1px solid #dddddd">
+                  <div class="col-md-5 column">
+                      <img id="headimg" class="img-circle" width="80px" height="80px" style="opacity:0.8;" >
+                  </div>
+                  <div class="col-md-7 column">
+                      <h3>你好，<br><span class="username"></span>~</h3>
+                  </div>
+              </div>
+
+              <!--联系人信息-->
+              <table class="table table-striped">
+                  <caption>
+                      好友
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <a href="http://120.24.70.191:8080/CodeBoy/friend/edit_friend">
+                          <img src="http://120.24.70.191:8080/CodeBoy/images/friends.png" width="22.5px" height="22.5px"  >
+                          管理
+                      </a>
+
+                  </caption>
+                  <tbody id="friend_result">
+
+                  </tbody>
+              </table>
+
+          </div>
+
+          <!--最近联系人-->
+          <div class="col-md-9 column">
+              <h4>
+                  最近联系人
+              </h4>
+              <div id="contact_result">
+
+              </div>
+
+          </div>
+
+      </div>
+  </div>
+  <script src="http://120.24.70.191:8080/CodeBoy/js/jquery.min.js"></script>
+  <script src="http://120.24.70.191:8080/CodeBoy/js/bootstrap.min.js"></script>
+  <script>
+      var userId,username,friendingId,friendId,friendName;
+      /*获取用户信息*/
+      function init(){
+          $.post("http://120.24.70.191:8080/CodeBoy/back_end/user/get_user_information",
+              function(result){
+                  username = result.data.username;
+                  userId = result.data.userId;
+                  $(".username").html(username);
+                  $("#headimg").attr("src",result.data.headimg);
+                  getFriend();
+                  getMessage();
+              });
+      }
+      /*注销*/
+      function unlogin() {
+          $.post("http://120.24.70.191:8080/CodeBoy/back_end/user/unlogin",
+              function(data){
+                  alert(data.message);
+                  window.location.href="http://120.24.70.191:8080/CodeBoy/user/login";
+              });
+      }
+
+      function getFriend(){
+          $("#friend_result").html("");
+          $.post("http://120.24.70.191:8080/CodeBoy/back_end/friend/get_friend_by_hostId",{hostId:userId},
+              function(result){
+                  for (var i = 0;i<result.friend.length;i++)
+                  {
+                      $("#friend_result").append(
+                          "<tr> <td>"+
+                          "<a href=\"http://120.24.70.191:8080/CodeBoy/user/get_user?userId="+result.friend[i].friendId+"\">"+
+                          "<img src=\""+result.user[i].headimg+"\" class=\"img-circle\" width=\"30px\" height=\"30px\">&nbsp;&nbsp;"+
+                          result.friend[i].friendName+
+                          "</a> </td> <td>"+
+                          "<a onclick=\"window.open(\'http://120.24.70.191:8080/CodeBoy/friend/contact_detail?friendingId="+result.friend[i].friendingId+"\')\">"+
+                          "联系("+result.messageNum[i]+") </a> </td> </tr>")
+                  }
+              });
+      }
+      function getMessage(){
+          $.post("http://120.24.70.191:8080/CodeBoy/back_end/message/get_message_by_hostId",{hostId:userId},
+              function(result){
+                  for (var i = 0;i<result.messages.length;i++)
+                  {
+                      $("#contact_result").append(
+                          "<div class=\"panel panel-default\">"+
+                          "<div class=\"panel-heading\">"+
+                          "<img src=\""+result.user[i].headimg+"\" class=\"img-circle\" width=\"30px\" height=\"30px\" >"+
+                          result.user[i].username+
+                          "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+result.messages[i].messageTime+
+                          "</div>"+
+                          "<div class=\"panel-body\">"+
+                          result.messages[i].content+
+                          "</div>"+
+                          "</div>")
+                  }
+              });
+      }
+
+      init();
+  </script>
+</body>
+</html>

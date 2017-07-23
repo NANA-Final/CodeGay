@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jishaokang.dao.FollowDao">
+
+    <insert id="insert" parameterType="jishaokang.model.Follow" useGeneratedKeys="true" keyProperty="LikeId">
+        INSERT INTO follow (userId, followerId,followTime)
+        VALUES (#{userId},#{followerId},#{followTime})
+    </insert>
+    <delete id="delete" parameterType="jishaokang.model.Follow">
+        DELETE FROM follow
+        WHERE (followerId=#{followerId} AND userId=#{userId})
+    </delete>
+    <select id="select" parameterType="jishaokang.model.Follow" resultType="jishaokang.model.Follow">
+        SELECT * FROM follow
+        WHERE (followerId=#{followerId} AND userId=#{userId})
+    </select>
+
+</mapper>

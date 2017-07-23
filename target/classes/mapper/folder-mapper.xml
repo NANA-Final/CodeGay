@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jishaokang.dao.FolderDao">
+    <resultMap id="FolderResult" type="jishaokang.model.Folder">
+        <result column="folderId" property="folderId"/>
+        <result column="folderName" property="folderName"/>
+        <result column="fatherId" property="fatherId"/>
+        <result column="folderTime" property="folderTime"/>
+    </resultMap>
+    <insert id="insert" parameterType="jishaokang.model.Folder" useGeneratedKeys="true" keyProperty="codeId">
+        INSERT INTO folder (folderName,fatherId,folderTime)
+        VALUES (#{folderName},#{fatherId},#{folderTime})
+    </insert>
+    <delete id="delete" parameterType="int">
+        DELETE FROM folder
+        WHERE folderId=#{folderId}
+    </delete>
+    <update id="update" parameterType="jishaokang.model.Folder">
+        UPDATE folder SET folderName=#{folderName},fatherId=#{fatherId},folderTime=#{folderTime}
+        WHERE folderId=#{folderId}
+    </update>
+    <select id="selectByFolderId" parameterType="int" resultType="jishaokang.model.Folder">
+        SELECT * FROM folder
+        WHERE folderId=#{folderId}
+    </select>
+    <select id="selectByFatherId" parameterType="int" resultMap="FolderResult">
+        SELECT * FROM folder
+        WHERE fatherId=#{fatherId}
+    </select>
+</mapper>

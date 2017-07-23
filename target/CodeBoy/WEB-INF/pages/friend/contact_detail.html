@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>好友</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="http://120.24.70.191:8080/CodeBoy/css/bootstrap.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/prettify/r298/prettify.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+      <!--导航栏--------------------------------------------------------------------------------------->
+      <div class="row clearfix">
+          <div class="col-md-12 column">
+              <nav class="navbar navbar-default" role="navigation">
+                  <!--logo-->
+                  <div class="navbar-header">
+                      <a class="navbar-brand" href="#">
+                          <img src="http://120.24.70.191:8080/CodeBoy/images/logo.png" width="100px" height="50px" style="padding-bottom: 20px" >
+                      </a>
+                  </div>
+                  <!--功能区：首页 文章 代码 好友 交流 设置-->
+                  <div class="collapse navbar-collapse">
+                      <ul class="nav navbar-nav">
+                          <li>
+                              <a href="http://120.24.70.191:8080/CodeBoy/user">首页</a>
+                          </li>
+                          <li>
+                              <a href="http://120.24.70.191:8080/CodeBoy/article">文章</a>
+                          </li>
+                          <li>
+                              <a href="http://120.24.70.191:8080/CodeBoy/code">代码</a>
+                          </li>
+                          <li class="active">
+                              <a href="http://120.24.70.191:8080/CodeBoy/friend">好友</a>
+                          </li>
+                          <li>
+                              <a href="http://120.24.70.191:8080/CodeBoy/discuss">讨论</a>
+                          </li>
+                          <li>
+                              <a href="http://120.24.70.191:8080/CodeBoy/user/setting">设置</a>
+                          </li>
+                      </ul>
+                      <!--用户选项-->
+                      <ul class="nav navbar-nav navbar-right">
+                          <li class="dropdown">
+                              <a class="dropdown-toggle" data-toggle="dropdown">
+                                  <span class="username"></span>
+                              </a>
+                              <ul class="dropdown-menu">
+                                  <li>
+                                      <a onclick="unlogin()">注销</a>
+                                  </li>
+                              </ul>
+                          </li>
+                      </ul>
+                  </div>
+              </nav>
+          </div>
+      </div>
+
+      <div class="row clearfix">
+          <div class="col-md-3 column">
+
+              <!--用户信息-->
+              <div class="row clearfix" style="padding: 10px 15px;border:1px solid #dddddd">
+                  <div class="col-md-5 column">
+                      <img id="headimg" class="img-circle" width="80px" height="80px" style="opacity:0.8;" >
+                  </div>
+                  <div class="col-md-7 column">
+                      <h3>你好，<br><span class="username"></span>~</h3>
+                  </div>
+              </div>
+
+              <!--发送消息-->
+              <br>
+              <textarea class="form-control" rows="5" id="content" placeholder="在此输入内容"></textarea>
+              <br>
+              <button class="btn btn-default" onclick="sendMessage()">发送消息</button>
+          </div>
+
+          <!--最近联系人-->
+          <div class="col-md-9 column">
+              <h4>
+                  <a onclick="getUserPage()">
+                      <img id="friend_headimg" class="img-circle" width="30px" height="30px" style="opacity:0.8;" >
+                      与&nbsp;<span class="friend_name"></span>&nbsp;的对话
+                  </a>
+                  <button onclick="getMessageHistory()" class="btn btn-default" id="more">更多</button>
+              </h4>
+              <div id="message_result">
+
+              </div>
+
+          </div>
+
+      </div>
+  </div>
+  <script src="http://120.24.70.191:8080/CodeBoy/js/jquery.min.js"></script>
+  <script src="http://120.24.70.191:8080/CodeBoy/js/bootstrap.min.js"></script>
+  <script>
+      var userId,username,friendingId,friendId,friendName,friendHeadimg,messageTime,messageContent;
+      /*获取用户信息*/
+      function init(){
+          $.post("http://120.24.70.191:8080/CodeBoy/back_end/user/get_user_information",
+              function(result){
+                  username = result.data.username;
+                  userId = result.data.userId;
+                  $(".username").html(username);
+                  $("#headimg").attr("src",result.data.headimg);
+                  getFriendInformation();
+                  var timeid = window.setInterval(getNewMessage,100);
+              });
+      }
+      /*注销*/
+      function unlogin() {
+          $.post("http://120.24.70.191:8080/CodeBoy/back_end/user/unlogin",
+              function(data){
+                  alert(data.message);
+                  window.location.href="http://120.24.70.191:8080/CodeBoy/user/login";
+              });
+      }
+      function getUrlParam(name) {
+          var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+          var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+          if (r != null) return unescape(r[2]); return null; //返回参数值
+      }
+      function getFriendInformation(){
+          friendingId = getUrlParam("friendingId");
+          $.post("http://120.24.70.191:8080/CodeBoy/back_end/friend/get_friend_detail",{friendingId:friendingId},
+              function(result){
+                  friendId = result.data.friendId;
+                  $.post("http://120.24.70.191:8080/CodeBoy/back_end/user/get_user_information_by_userId",
+                      {userId:friendId},
+                      function(userResult){
+                          friendName = userResult.data.username;
+                          friendHeadimg = userResult.data.headimg;
+                          $(".friend_name").html(friendName);
+                          $("#friend_headimg").attr("src",friendHeadimg);
+                      });
+              });
+      }
+      function getNewMessage(){
+          $.post("http://120.24.70.191:8080/CodeBoy/back_end/message/get_new_message_by_friendingId",{friendingId:friendingId},
+              function(result){
+                  for (var i = 0;i<result.messages.length;i++)
+                  {
+                      $("#message_result").append(
+                          "<div class=\"panel panel-default\">"+
+                          "<div class=\"panel-heading\">"+
+                          "<img src=\""+result.user[i].headimg+"\" class=\"img-circle\" width=\"30px\" height=\"30px\" >"+
+                          result.user[i].username+
+                          "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+result.messages[i].messageTime+
+                          "</div>"+
+                          "<div class=\"panel-body\">"+
+                          result.messages[i].content+
+                          "</div>"+
+                          "</div>")
+                  }
+              });
+      }
+      function getTime() {
+          var date = new Date();
+          var seperator1 = "-";
+          var seperator2 = ":";
+          var month = date.getMonth() + 1;
+          var strDate = date.getDate();
+          if (month >= 1 && month <= 9) {
+              month = "0" + month;
+          }
+          if (strDate >= 0 && strDate <= 9) {
+              strDate = "0" + strDate;
+          }
+          var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+              + " " + date.getHours() + seperator2 + date.getMinutes();
+          return currentdate;
+      }
+      function sendMessage() {
+          content = $("#content").val();
+          $.post("http://120.24.70.191:8080/CodeBoy/back_end/message/new_message",
+              {senderId: userId, receiverId: friendId, content: content, messageTime: getTime(), readCheck: false},
+              function (result) {
+                  $("#content").val("");
+                  getNewMessage();
+              });
+      }
+      function getMessageHistory() {
+          window.open("http://120.24.70.191:8080/CodeBoy/friend/contact_history?friendingId="+friendingId);
+      }
+      init();
+  </script>
+
+</body>
+</html>

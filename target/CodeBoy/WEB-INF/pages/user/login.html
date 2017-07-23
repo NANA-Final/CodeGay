@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>登录</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="http://120.24.70.191:8080/CodeBoy/css/bootstrap.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="row clearfix" style="padding-top: 150px">
+        <div class="col-md-4 column">
+        </div>
+        <div class="col-md-4 column">
+            <form role="form">
+                <div class="form-group">
+                    用户名<input type="text" class="form-control" id="username" />
+                </div>
+                <div class="form-group">
+                    密码<input type="password" class="form-control" id="password" />
+                </div>
+                <a onclick="login()" style="font-size: 20px">登录</a>
+            </form>
+        </div>
+        <div class="col-md-4 column">
+        </div>
+    </div>
+</div>
+<script src="http://120.24.70.191:8080/CodeBoy/js/jquery.min.js"></script>
+<script src="http://120.24.70.191:8080/CodeBoy/js/bootstrap.min.js"></script>
+<script>
+    var username,password;
+    /*提交表单*/
+    function login(){
+        username = $("#username").val();
+        password = $("#password").val();
+        $.post("http://120.24.70.191:8080/CodeBoy/back_end/user/login",
+            {username:username,password:password},
+            function(data){
+                if (data.message=="succeed") {
+                    window.location.href="http://120.24.70.191:8080/CodeBoy/user";
+                }
+                else{
+                    alert(data.message);
+                }
+            });
+    }
+</script>
+</body>
+</html>

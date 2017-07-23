@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>注册</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="http://120.24.70.191:8080/CodeBoy/css/bootstrap.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="row clearfix" style="padding-top: 150px">
+        <div class="col-md-4 column">
+        </div>
+        <div class="col-md-4 column">
+            <form role="form">
+                <div class="form-group">
+                    用户名<input type="text" class="form-control" id="username" />
+                </div>
+                <div class="form-group">
+                    密码<input type="password" class="form-control" id="password" />
+                </div>
+                <div class="form-group">
+                    <label for="headimg">头像</label>
+                    <input type="file" id="headimg" />
+                </div>
+            </form>
+            <a onclick="register()" style="font-size: 20px">提交</a>
+        </div>
+        <div class="col-md-4 column">
+        </div>
+    </div>
+</div>
+<script src="http://120.24.70.191:8080/CodeBoy/js/jquery.min.js"></script>
+<script src="http://120.24.70.191:8080/CodeBoy/js/bootstrap.min.js"></script>
+<script>
+    var username,password,headimg,headimgCode="http://120.24.70.191:8080/CodeBoy/images/default_headimg.png";
+    /*提交表单*/
+    function register(){
+        username = $("#username").val();
+        password = $("#password").val();
+        headimg = document.getElementById('headimg');
+        if (headimg.value!="") {
+            var imgFile = new FileReader();
+            imgFile.readAsDataURL(headimg.files[0]);
+            imgFile.onload = function () {
+                headimgCode = this.result; //base64数据
+                $.post("http://120.24.70.191:8080/CodeBoy/back_end/user/register",
+                    {username:username,password:password,headimg:headimgCode,totalFollow:0,totalFollower:0},
+                    function(data){
+                        alert(data.message);
+                        window.location.href="http://120.24.70.191:8080/CodeBoy/user/login";
+                    });
+            }
+        }else{
+            $.post("http://120.24.70.191:8080/CodeBoy/back_end/user/register",
+                {username:username,password:password,headimg:headimgCode,totalFollow:0,totalFollower:0},
+                function(data){
+                    alert(data.message);
+                    window.location.href="http://120.24.70.191:8080/CodeBoy/user/login";
+                });
+        }
+    }
+</script>
+</body>
+</html>
